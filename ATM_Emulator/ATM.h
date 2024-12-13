@@ -8,17 +8,17 @@ class ATM
 {
 public:
 
-	void CreateUser(std::string NumberCard, int PIN);
-	bool ExistingUser(std::string NumberCard, int PIN);
+	void CreateUser(const std::string&& NumberCard, int PIN);
+	bool ExistingUser(const std::string&& NumberCard, int PIN);
 	void deposit(int amount);
 	void withdraw(int amount);
-	int  GetBalance() const;
+	int  GetBalance() const noexcept;
 
 private:
 	void UpdateUser();
 
 private:
-	std::vector<User> m_ListUsers;
-	User              m_CurrentUser;
+	std::vector<User> m_ListUsers{};
+	User              m_CurrentUser{};
 };
 

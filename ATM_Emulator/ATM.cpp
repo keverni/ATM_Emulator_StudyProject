@@ -1,25 +1,25 @@
 #include "ATM.h"
 
-void ATM::CreateUser(std::string NumberCard, int PIN)
+void ATM::CreateUser(const std::string&& NumberCard, int PIN)
 {
 	UpdateUser();
-	m_CurrentUser.CreateUser(NumberCard, PIN);
-	m_ListUsers.push_back(m_CurrentUser);
+	m_CurrentUser.CreateUser(std::forward<const std::string&&>(NumberCard), PIN);
+	m_ListUsers.emplace_back(m_CurrentUser);
 }
-bool ATM::ExistingUser(std::string NumberCard, int PIN)
+bool ATM::ExistingUser(const std::string&& NumberCard, int PIN)
 {
 	UpdateUser();
-	User obj;
-	obj.CreateUser(NumberCard, PIN);
-	for (int i = 0; i < m_ListUsers.size(); ++i)
+	User obj{};
+	obj.CreateUser(std::forward<const std::string&&>(NumberCard), PIN);
+	for (auto& elem : m_ListUsers)
 	{
-		if (m_ListUsers[i] == obj)
+		if (elem == obj)
 		{
-			m_CurrentUser = m_ListUsers[i];
-			return 1;
+			m_CurrentUser = elem;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 void ATM::deposit(int amount)
 {
@@ -29,7 +29,7 @@ void ATM::withdraw(int amount)
 {
 	m_CurrentUser.withdraw(amount);
 }
-int  ATM::GetBalance() const
+int  ATM::GetBalance() const noexcept
 {
 	return m_CurrentUser.GetBalance();
 }
@@ -39,11 +39,11 @@ void ATM::UpdateUser()
 {
 	if (!m_ListUsers.empty())
 	{
-		for (auto elem = std::begin(m_ListUsers); elem != std::end(m_ListUsers); ++elem)
+		for (auto& elem : m_ListUsers)
 		{
-			if (*elem == m_CurrentUser)
+			if (elem == m_CurrentUser)
 			{
-				*elem = m_CurrentUser;
+				elem = m_CurrentUser;
 			}
 		}
 	}

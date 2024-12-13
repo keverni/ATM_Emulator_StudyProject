@@ -7,14 +7,14 @@ class User
 public:
 	bool operator==(const User& obj);
 
-	void CreateUser(std::string NumberCard, int PIN);
+	void CreateUser(const std::string&& NumberCard, int PIN);
 	void deposit(int amount);
 	void withdraw(int amount);
-	int  GetBalance() const;
+	int  GetBalance() const noexcept;
 	
 private:
-	std::string m_NumberCard;
-	int         m_PINCode;
-	int			m_balance;
+	std::string m_NumberCard{ "" };
+	int         m_PINCode{ 0 };
+	int		    m_balance{ 0 };
 };
 

@@ -1,30 +1,29 @@
 #include <iostream>
 #include <string>
-#include "User.h"
 #include "ATM.h"
 
-void NewUser(ATM& atm)
+std::string InputString(const std::string& caption) noexcept
 {
-	std::string NumberCard = "";
-	int PIN = 0;
-	while (1)
+	std::cout << caption;
+
+	std::string value{};
+
+	while (value.empty())
 	{
-		std::cout << "Enter NumberCard for registrations: ";
-		std::cin >> NumberCard;
-		if (NumberCard == "")
-		{
-			std::cout << "Enter NumberCard" << std::endl;
-			continue;
-		}
-		else
-		{
-			break;
-		}
+		std::getline(std::cin, value);
 	}
+
+	return value;
+}
+
+void NewUser(ATM&& atm)
+{
+	auto NumberCard{ InputString("Enter NumberCard for registrations: ") };
+	auto PIN{ 0 };
 
 	std::cout << std::endl;
 
-	while (1)
+	while (true)
 	{
 		std::cout << "Enter your PIN-code for registrations: ";
 		std::cin >> PIN;
@@ -39,37 +38,37 @@ void NewUser(ATM& atm)
 		}
 	}
 	
-	atm.CreateUser(NumberCard, PIN);
+	atm.CreateUser(std::forward<const std::string&&>(NumberCard), PIN);
 }
 
 int main()
 {
 	std::cout << "Hi! It's ATM.";
-	ATM atm;
-	NewUser(atm);
-	int Choose = 0;
+	ATM atm{};
+	NewUser(std::forward<ATM&&>(atm));
+	auto Choose{ 0 };
 
-	while (1)
+	while (true)
 	{
 		std::cout << "Choose option: 1 - Deposit, 2 - Withdraw, 3 - Create new user, 4 - Show balance,  5 - Enter to existing user, 6 - exit" << std::endl;
 		std::cin >> Choose;
 		if (Choose == 1)
 		{
-			int amount;
+			auto amount{ 0 };
 			std::cout << "Enter amount to deposit: ";
 			std::cin >> amount;
 			atm.deposit(amount);
 		}
 		else if (Choose == 2)
 		{
-			int amount;
+			auto amount{ 0 };
 			std::cout << "Enter amount to withdraw: ";
 			std::cin >> amount;
 			atm.withdraw(amount);
 		}
 		else if (Choose == 3)
 		{
-			NewUser(atm);
+			NewUser(std::forward<ATM&&>(atm));
 		}
 		else if (Choose == 4)
 		{
@@ -77,17 +76,15 @@ int main()
 		}
 		else if (Choose == 5)
 		{
-			std::string NumberCard = "";
-			int Pin = 0;
+			auto NumberCard{ InputString("Enter NumberCard to login: ")};
+			auto Pin{ 0 };
 
-			std::cout << "Enter NumberCard to login: ";
-			std::cin >> NumberCard;
 			std::cout << std::endl;
 
 			std::cout << "Enter PIN-code to login: ";
 			std::cin >> Pin;
 
-			if (atm.ExistingUser(NumberCard, Pin))
+			if (atm.ExistingUser(std::move(NumberCard), Pin))
 			{
 				std::cout << "Good!!! You are welcome!" << std::endl;
 				continue;
